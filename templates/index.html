@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <link type="image/png" sizes="32x32" rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body onload=init()>
+    <div class="panel">
+        <div id="sticky_top">
+            <div id="char_name"></div>
+            <select id="select_chat" onchange="selected_chat_changed(this.value)">
+                <option value="new">New chat</option>
+            </select>
+            <div id="user_name"></div>
+        </div>
+        <div id="chat_new" style="display: none">
+            <div id="chat_new_header">
+                <label for="select_template">Template</label>
+                <select id="select_template" onchange="selected_template_changed()"></select>
+                <p style="flex-grow: 1"></p>
+                <button type="button" onclick="set_user()">Logout</button>
+            </div>
+            <div id="template_data"></div>
+            <div class="note">Note that chat history is stored on the server and can be used e.g. to fine-tune the model.</div>
+            <button type="button" onclick="new_chat()">Start</button>
+        </div>
+        <div id="chat_main" style="display: none">
+            <div id="chat" class="chat"></div>
+            <div id="chat_draft" class="chat"></div>
+            <div id="status"> </div>
+            <div id="controls">
+                <p><label for="show_hidden">Show hidden</label> <input type='checkbox' id="show_hidden" onclick="show_hidden(this.checked)" /></p>
+                <p style="flex-grow: 1"></p>
+                <button type="button" onclick="remove_last()">Remove last</button>
+                <div id="chat_settings" style="display: none">
+                    <button type="button" onclick="show_user_key()">Show user key</button>
+                    <button type="button" onclick="set_user()">Logout</button>
+                    <button type="button" onclick="new_chat_like_this()">New chat</button>
+                    <button type="button" onclick="remove_chat()">Remove chat</button>
+                </div>
+                <button type="button" onclick="toggle_settings()">...</button>
+            </div>
+            <textarea id="add_message_content" onkeypress="add_message_keypress(event)"></textarea>
+        </div>
+    </div>
+    <div id="footer"><a href="https://github.com/petrmikheev/yet_another_ai_chat">github.com/petrmikheev/yet_another_ai_chat</a></div>
+</body>
+</html>
