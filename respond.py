@@ -40,7 +40,8 @@ def _respond_search(ctx, logic_ctx):
         return _respond_answer(ctx, logic_ctx)
     actor = ctx.actor
     last_msgs = actor.format_records(ctx.last_records[-3:], logic_ctx.model)
-    _respond(ctx, f"{actor.name} will check information online. Write {actor.his_her} initial short response before searching. Don't invent search results.", short=True, temperature=0.2, rep_pen=1.2)
+    #_respond(ctx, f"{actor.name} will check information online. Write {actor.his_her} initial short response before searching. Don't invent search results.", short=True, temperature=0.2, rep_pen=1.2)
+    _respond(ctx, f"{actor.name} will check information online. Write {actor.his_her} initial short response before searching. {actor.He_She} shouldn't provide any facts yet.", short=True, temperature=0.2, rep_pen=1.2)
     if actor.tasks and isinstance(actor.tasks[-1], web_search.SearchTask):
         return
     task = web_search.SearchTask(logic_ctx, last_msgs)
@@ -60,18 +61,18 @@ def _respond_logic(ctx, logic_ctx):
 ANSWER = data.Action('ANSWER', 'If {{char}} can answer right away - ANSWER', _respond_answer)
 LOGIC = data.Action('SOLVE_STEP_BY_STEP', 'For a math task - SOLVE_STEP_BY_STEP', _respond_logic)
 CLARIFY = data.Action('ASK_DETAILS', 'If the task is unclear and {{char}} needs details - ASK_DETAILS', _respond_clarify)
-#SEARCH = data.Action('SEARCH', 'If the question is about real-world facts - SEARCH in internet', _respond_search)
-SEARCH = data.Action('WEB_SEARCH', 'If requires actual information or facts - WEB_SEARCH', _respond_search)
+SEARCH1 = data.Action('SEARCH', 'If the question is about real-world facts - SEARCH in internet', _respond_search)
+SEARCH2 = data.Action('WEB_SEARCH', 'If requires actual information or facts - WEB_SEARCH', _respond_search)
 
-# WEB_SERVICE and OTHER both redirect to ANSERT. Needed to reduce the rate of false-positive classification as SEARCH.
-WEB_SERVICE = data.Action('WEB_SERVICE', 'Service in internet other than search (e.g. translation) - WEB_SERVICE', _respond_answer)
+# Redirects to ANSWER. Needed to reduce the rate of false-positive classification as SEARCH.
 OTHER = data.Action('OTHER', 'If none of the options is applicable - OTHER', _respond_answer)
+WEB_SERVICE = data.Action('WEB_SERVICE', 'Service in internet other than search (e.g. translation) - WEB_SERVICE', _respond_answer)
 
 # Not implemented. By the idea it should start a separate thinking loop "plan->action->analyze results" with same interface as web_search.SearchTask.
 # Requires additional actions like sandboxed file access for storing temporary data and URL access.
 TASK = data.Action('BIG_TASK', 'If the task requires planning or preparations - BIG_TASK', _respond_task)
 
-all_actions = [ANSWER, CLARIFY, SEARCH, WEB_SERVICE, LOGIC, OTHER]
+all_actions = [ANSWER, CLARIFY, SEARCH1, SEARCH2, LOGIC, OTHER]
 
 def create_ctx(actor, timestamp=None, temperature=None, max_token=None):
     last_records = actor.get_last_records(10)
